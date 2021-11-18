@@ -6,8 +6,7 @@ package:
   version: {{ version }}
 
 source:
-  url: https://github.com/analogdevicesinc/{{ name }}/archive/v{{ version }}.tar.gz
-  sha256: 290d72bf5cec9ceab0030f6a4bc49bfd962aff56997aebebf70a20cb4a6bf77a
+  url: https://github.com/analogdevicesinc/{{ name }}/archive/aaf57fd69357138e991cef8ca63cc241797053ff.zip
 
 build:
   number: 1
