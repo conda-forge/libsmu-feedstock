@@ -1,0 +1,14 @@
+diff --git a/bindings/python/pysmu/utils.py b/bindings/python/pysmu/utils.py
+index 6309f4a..2adeab0 100644
+--- a/bindings/python/pysmu/utils.py
++++ b/bindings/python/pysmu/utils.py
+@@ -1,5 +1,7 @@
+-from collections import Iterable
+-
++try:
++    from collections.abc import Iterable
++except ImportError:
++    from collections import Iterable
+ 
+ def iterify(x):
+     """Return an iterable form of a given value."""
