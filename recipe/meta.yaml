@@ -6,8 +6,8 @@ package:
   version: {{ version }}
 
 source:
-  url: https://github.com/analogdevicesinc/{{ name }}/archive/v{{ version }}.tar.gz
-  sha256: 290d72bf5cec9ceab0030f6a4bc49bfd962aff56997aebebf70a20cb4a6bf77a
+  url: https://github.com/analogdevicesinc/{{ name }}/archive/master.tar.gz
+  sha256: 8299b8e1cf66eaa84a67f9046bb236809308dec31355d0faf9fd58b3c561546b
 
 build:
   number: 2
@@ -32,7 +32,6 @@ requirements:
     - cython
   run:
     - python
-    - build
 
 test:
   commands:
