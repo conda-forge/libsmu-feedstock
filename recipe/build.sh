@@ -31,6 +31,8 @@ else
     )
 fi
 
+$PYTHON -m pip install build
 cmake .. "${cmake_config_args[@]}"
 cmake --build . --config Release -- -j${CPU_COUNT}
 cmake --build . --config Release --target install
+$PYTHON -m pip install dist/*.whl
