@@ -1,36 +1,50 @@
 {% set name = "libsmu" %}
-{% set version = "1.0.3" %}
+{% set version = "1.0.4" %}
 
 package:
   name: {{ name|lower }}
   version: {{ version }}
 
 source:
-  url: https://github.com/analogdevicesinc/{{ name }}/archive/v{{ version }}.tar.gz
-  sha256: 290d72bf5cec9ceab0030f6a4bc49bfd962aff56997aebebf70a20cb4a6bf77a
+  git_url: https://github.com/analogdevicesinc/{{ name }}.git
+  git_tag: v{{ version }}
+  patches:
+    - 0001-skip-python-build-in-cmake.patch
+    - 0002-fix-macos-win-build.patch
+    - 0003-fix-setup-empty-args.patch
 
 build:
-  number: 1
+  number: 0
+  skip: true  # [py<310 or (win and arm64)]
   run_exports:
     - {{ pin_subpackage('libsmu', max_pin='x.x') }}
 
 requirements:
   build:
+    - {{ compiler('c') }}
     - {{ compiler('cxx') }}
-    - {{ cdt('libudev-devel') }}  # [linux]
+    - {{ stdlib("c") }}
     - cmake
     - make  # [not win]
     - ninja  # [win]
     - pkg-config  # [not win]
+    - python                                 # [build_platform != target_platform]
+    - cython                                 # [build_platform != target_platform]
   host:
-    - boost-cpp
+    - libboost-devel
     - _openmp_mutex  # [linux]
+    - llvm-openmp    # [osx]
     - libusb >=1
+    - libudev  # [linux]
     - python
     - setuptools
     - cython
+    - pip
+    - python-build
+    - six
   run:
     - python
+    - llvm-openmp    # [osx]
 
 test:
   commands:

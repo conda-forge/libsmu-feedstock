@@ -6,7 +6,9 @@ mkdir build
 cd build
 
 :: configure
-cmake -G "Ninja" ^
+cmake -G "Ninja" %CMAKE_ARGS% ^
+    -DCMAKE_POLICY_VERSION_MINIMUM=3.5 ^
+    -DCMAKE_CXX_STANDARD=14 ^
     -DCMAKE_BUILD_TYPE:STRING=Release ^
     -DCMAKE_INSTALL_PREFIX:PATH="%LIBRARY_PREFIX%" ^
     -DCMAKE_INSTALL_LIBDIR:PATH="lib" ^
@@ -15,11 +17,12 @@ cmake -G "Ninja" ^
     -DLIBUSB_LIBRARIES:PATH="%LIBRARY_LIB%\libusb-1.0.lib" ^
     -DLIBUSB_INCLUDE_DIRS:PATH="%LIBRARY_INC%\libusb-1.0" ^
     -DENABLE_PACKAGING=OFF ^
-    -DBUILD_PYTHON=OFF ^
+    -DINSTALL_UDEV_RULES=OFF ^
+    -DBUILD_PYTHON=ON ^
     -DBUILD_CLI=ON ^
     -DBUILD_EXAMPLES=OFF ^
     -DBUILD_TESTS=OFF ^
-    -DINSTALL_UDEV_RULES=OFF ^
+    -DPython_EXECUTABLE:FILEPATH="%PYTHON%" ^
     -DWITH_DOC=OFF ^
     ..
 if errorlevel 1 exit 1
@@ -32,37 +35,6 @@ if errorlevel 1 exit 1
 cmake --build . --config Release --target install
 if errorlevel 1 exit 1
 
-:: Build cython interface
-cd ..
-mkdir pybuild
-cd pybuild
-
-cmake -G "Ninja" ^
-    -DCMAKE_BUILD_TYPE:STRING=Release ^
-    -DCMAKE_INSTALL_PREFIX:PATH="%LIBRARY_PREFIX%" ^
-    -DCMAKE_INSTALL_LIBDIR:PATH="lib" ^
-    -DCMAKE_INSTALL_SBINDIR:PATH="bin" ^
-    -DCMAKE_PREFIX_PATH:PATH="%LIBRARY_PREFIX%" ^
-    -DLIBUSB_LIBRARIES:PATH="%LIBRARY_LIB%\libusb-1.0.lib" ^
-    -DLIBUSB_INCLUDE_DIRS:PATH="%LIBRARY_INC%\libusb-1.0" ^
-    -DPYTHON_EXECUTABLE=%PYTHON% ^
-    -DBUILD_EXAMPLES=OFF ^
-    -DBUILD_TESTS=OFF ^
-    -DBUILD_PYTHON=OFF ^
-    -DUSE_PYTHON2=OFF ^
-    ..
-
-:: build
-cmake --build . --config Release -- -j%CPU_COUNT%
+:: Install python bindings from generated setup.py in build directory
+%PYTHON% -m pip install . --no-deps --no-build-isolation --ignore-installed -vv
 if errorlevel 1 exit 1
-
-:: install
-cmake --build . --config Release --target install
-if errorlevel 1 exit 1
-
-:: py install
-cd ..
-cd bindings
-cd python
-%PYTHON% setup.py build_ext -I "%LIBRARY_INC%\libusb-1.0"
-%PYTHON% setup.py install
