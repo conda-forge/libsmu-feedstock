@@ -48,8 +48,7 @@ cmake -G "Ninja" ^
     -DPYTHON_EXECUTABLE=%PYTHON% ^
     -DBUILD_EXAMPLES=OFF ^
     -DBUILD_TESTS=OFF ^
-    -DBUILD_PYTHON=OFF ^
-    -DUSE_PYTHON2=OFF ^
+    -DBUILD_PYTHON=ON ^
     ..
 
 :: build
@@ -61,8 +60,4 @@ cmake --build . --config Release --target install
 if errorlevel 1 exit 1
 
 :: py install
-cd ..
-cd bindings
-cd python
-%PYTHON% setup.py build_ext -I "%LIBRARY_INC%\libusb-1.0"
-%PYTHON% setup.py install
+%PYTHON% -m pip install dist\*.whl
